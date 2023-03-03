@@ -1,1 +1,1 @@
-# SimplJsGame
+# simplJsGame
