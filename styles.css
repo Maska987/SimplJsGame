@@ -1,0 +1,9 @@
+#canvas {
+    background-color: rgb(24, 24, 24);
+    /*border: 9px solid green;*/
+    padding: 0;
+    margin: auto;
+    display: block;
+    width: 50%;
+    
+}
