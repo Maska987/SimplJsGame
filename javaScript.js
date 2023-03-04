@@ -74,6 +74,7 @@ window.onload = function(){
     function swipe(){
         var mouseX = event.clientX;
         var mouseY = event.clientY;
+        console.log(mouseX + " " + mouseY);
         //console.log(mouseX + " " + mouseY)
         canvas.onmouseup = function(){
             /*var mouseX = event.clientX;
