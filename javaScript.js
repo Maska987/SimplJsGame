@@ -314,7 +314,11 @@ window.onload = function(){
         context.fillText("Fps " + fps, 20, 20); //вывод fps на экран
 
         //canvasConsole(k) //отрисовка canvas консоли
-        
+
+        context.beginPath();
+        context.font = cWidth / 100 * 50 / 10 + "px Arial";
+        context.fillStyle = "#17ab00";
+        context.fillText(1.0, cWidth - 100, cHeight); //отрисовки версии
 
         window.requestAnimationFrame(draw);
     }
