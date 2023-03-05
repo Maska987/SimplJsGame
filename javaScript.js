@@ -92,59 +92,48 @@ window.onload = function(){
         var sizepx = cWidth / 100 * 50 / Msize
 
         if(mobile){ //обработка свайпа на телефоне
-            /*
-            evt.preventDefault();
-            var touch = evt.changedTouches[0];
-            var mouseX = touch.pageX;
-            var mouseY = touch.pageY;
-            //console.log(mouseX + " " + mouseY)
-            canvas.addEventListener('touchend', function(evt){
-                evt.preventDefault();
-                var touch = evt.changedTouches[0];
-                //console.log(touch.mouseX + " " + touch.mouseY)
-                if(Math.abs(touch.pageX - mouseX) > sizepx / 10 || Math.abs(touch.pageY - mouseY) > sizepx / 10){
-                    if(Math.abs(touch.pageX - mouseX) > Math.abs(touch.pageY - mouseY)){
-                        if(touch.pageX - mouseX > 0){
-                            move(1);
-                        }else{
-                            move(3);
-                        }
-                    }else{
-                        if(touch.pageY - mouseY > 0){
-                            move(2);
-                        }else{
-                            move(4);
-                        }
-                    }
-                }
-            }, listener = "once");
-            */
 
             var swipeDir;
             var startX, startY, distX, distY;
-            var threshold = sizepx / 100 * 50; // минимальное расстояние, чтобы считать свайп
+            var threshold = sizepx / 10; // минимальное расстояние, чтобы считать свайп
           
-            canvas.addEventListener('touchstart', function(e) {
-              var touch = e.changedTouches[0];
-              startX = touch.pageX;
-              startY = touch.pageY;
-            });
-          
-            canvas.addEventListener('touchend', function(e) {
-              var touch = e.changedTouches[0];
-              distX = touch.pageX - startX;
-              distY = touch.pageY - startY;
+            canvas.ontouchstart = function(e) {
+                //console.log('touchstart')
+                var touch = e.changedTouches[0];
+                startX = touch.pageX;
+                startY = touch.pageY;
+                //console.log(startX + " " + startY)
+            }
+            
+            canvas.ontouchend = function(e) {
+                //console.log('touchend')
+                var touch = e.changedTouches[0];
+                distX = touch.pageX - startX;
+                distY = touch.pageY - startY;
+                //console.log(startX + " " + startY + " " + distX + " " + distY)
           
               if (Math.abs(distX) >= threshold && Math.abs(distY) <= threshold) {
                 swipeDir = (distX < 0) ? move(3) : move(1);
               } else if (Math.abs(distY) >= threshold && Math.abs(distX) <= threshold) {
                 swipeDir = (distY < 0) ? move(4) : move(2);
               }
-          
-              if (swipeDir && callback) {
-                callback(swipeDir);
-              }
-            });
+
+              if(Math.abs(distX) > sizepx / 10 || Math.abs(distY) > sizepx / 10){
+                if(Math.abs(distX) > Math.abs(distY)){
+                    if(distX > 0){
+                        move(1);
+                    }else{
+                        move(3);
+                    }
+                }else{
+                    if(distY > 0){
+                        move(2);
+                    }else{
+                        move(4);
+                    }
+                }
+            }
+            }
 
         }else{
             var mouseX = event.clientX;
@@ -309,16 +298,16 @@ window.onload = function(){
         drawMas()
 
         context.beginPath();
-        context.font = "20px Arial";
+        context.font = cWidth / 100 * 50 / 12 + "px Arial";
         context.fillStyle = "#17ab00";
-        context.fillText("Fps " + fps, 20, 20); //вывод fps на экран
+        context.fillText("Fps " + fps, 20, cWidth / 100 * 50 / 12 + 5); //вывод fps на экран
 
         //canvasConsole(k) //отрисовка canvas консоли
 
         context.beginPath();
         context.font = cWidth / 100 * 50 / 10 + "px Arial";
         context.fillStyle = "#17ab00";
-        context.fillText(1.0, cWidth - 100, cHeight); //отрисовки версии
+        context.fillText("beta 2", cWidth - 150, cHeight - 2); //отрисовки версии
 
         window.requestAnimationFrame(draw);
     }
