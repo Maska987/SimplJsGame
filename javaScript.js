@@ -22,7 +22,7 @@ window.onload = function(){
         }
     }
 
-    var messeg = "mobile " + mobile;
+    //var messeg = "mobile " + mobile;
     function canvasConsole(messeg){ //консоль в canvas
         context.beginPath();
         context.font = cWidth / 100 * 50 / 5 + "px Arial";
@@ -85,11 +85,14 @@ window.onload = function(){
     randomSpawn();
     randomSpawn();
 
+    
+
     //обнаружение свайпа и его направления
     function swipe(evt = 0){
         var sizepx = cWidth / 100 * 50 / Msize
 
         if(mobile){ //обработка свайпа на телефоне
+            /*
             evt.preventDefault();
             var touch = evt.changedTouches[0];
             var mouseX = touch.pageX;
@@ -114,7 +117,34 @@ window.onload = function(){
                         }
                     }
                 }
-            }, false);
+            }, listener = "once");
+            */
+
+            var swipeDir;
+            var startX, startY, distX, distY;
+            var threshold = sizepx / 100 * 50; // минимальное расстояние, чтобы считать свайп
+          
+            canvas.addEventListener('touchstart', function(e) {
+              var touch = e.changedTouches[0];
+              startX = touch.pageX;
+              startY = touch.pageY;
+            });
+          
+            canvas.addEventListener('touchend', function(e) {
+              var touch = e.changedTouches[0];
+              distX = touch.pageX - startX;
+              distY = touch.pageY - startY;
+          
+              if (Math.abs(distX) >= threshold && Math.abs(distY) <= threshold) {
+                swipeDir = (distX < 0) ? move(3) : move(1);
+              } else if (Math.abs(distY) >= threshold && Math.abs(distX) <= threshold) {
+                swipeDir = (distY < 0) ? move(4) : move(2);
+              }
+          
+              if (swipeDir && callback) {
+                callback(swipeDir);
+              }
+            });
 
         }else{
             var mouseX = event.clientX;
@@ -283,7 +313,7 @@ window.onload = function(){
         context.fillStyle = "#17ab00";
         context.fillText("Fps " + fps, 20, 20); //вывод fps на экран
 
-        canvasConsole(messeg) //отрисовка canvas консоли
+        //canvasConsole(k) //отрисовка canvas консоли
         
 
         window.requestAnimationFrame(draw);
