@@ -5,6 +5,8 @@ window.onload = function(){
     var cWidth = canvas.width;
     var cHeight = canvas.height;
 
+    var mobile = ('ontouchstart' in window) ? true : false; //проверка сайт мобильный или комп
+
     var Msize = 4;
 
     var M = [];
@@ -72,36 +74,59 @@ window.onload = function(){
 
     //обнаружение свайпа и его направления
     function swipe(){
-        var mouseX = event.clientX;
-        var mouseY = event.clientY;
-        console.log(mouseX + " " + mouseY);
-        //console.log(mouseX + " " + mouseY)
-        canvas.onmouseup = function(){
-            /*var mouseX = event.clientX;
-            var mouseY = event.clientY;
-            console.log(mouseX + " " + mouseY)*/
-            //console.log((event.clientX - mouseX) + " " + (event.clientY - mouseY));
-            if(Math.abs(event.clientX - mouseX) > 10 || Math.abs(event.clientY - mouseY) > 10){
-                if(Math.abs(event.clientX - mouseX) > Math.abs(event.clientY - mouseY)){
-                    if(event.clientX - mouseX > 0){
-                        move(1);
+        if(mobile){ //обработка свайпа на телефоне
+            evt.preventDefault();
+            var touch = evt.changedTouches[0];
+            var mouseX = touch.pageX;
+            var mouseY = touch.pageY;
+            elem.addEventListener('touchend', function(){
+                if(Math.abs(touch.pageX - mouseX) > 10 || Math.abs(touch.pageY - mouseY) > 10){
+                    if(Math.abs(touch.pageX - mouseX) > Math.abs(touch.pageY - mouseY)){
+                        if(touch.pageX - mouseX > 0){
+                            move(1);
+                        }else{
+                            move(3);
+                        }
                     }else{
-                        move(3);
-                    }
-                }else{
-                    if(event.clientY - mouseY > 0){
-                        move(2);
-                    }else{
-                        move(4);
+                        if(touch.pageY - mouseY > 0){
+                            move(2);
+                        }else{
+                            move(4);
+                        }
                     }
                 }
-            }
-        };
+            }, false);
+
+        }else{
+            var mouseX = event.clientX;
+            var mouseY = event.clientY;
+            //console.log(mouseX + " " + mouseY);
+            canvas.onmouseup = function(){
+                if(Math.abs(event.clientX - mouseX) > 10 || Math.abs(event.clientY - mouseY) > 10){
+                    if(Math.abs(event.clientX - mouseX) > Math.abs(event.clientY - mouseY)){
+                        if(event.clientX - mouseX > 0){
+                            move(1);
+                        }else{
+                            move(3);
+                        }
+                    }else{
+                        if(event.clientY - mouseY > 0){
+                            move(2);
+                        }else{
+                            move(4);
+                        }
+                    }
+                }
+            };
+        }
 
     }
-    canvas.onmousedown = function() {
-        var x = swipe();
-    };
+
+    if(mobile){
+        canvas.addEventListener('touchstart', swipe, false);
+    }else{
+        canvas.addEventListener('mousedown', swipe, false);
+    }
 
 
     //функция перемещения и сложения значений в сетке
