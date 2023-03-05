@@ -5,7 +5,12 @@ window.onload = function(){
     var cWidth = canvas.width;
     var cHeight = canvas.height;
 
-    var mobile = ('ontouchstart' in window) ? true : false; //проверка сайт мобильный или комп
+    if('ontouchstart' in window){
+        var mobile = true;
+        //event.preventDefault(); //отключение скролинга сайта и захват ивентов движения пальца
+    }else{
+        var mobile = false
+    }//проверка сайт мобильный или комп
 
     var Msize = 4;
 
@@ -73,14 +78,20 @@ window.onload = function(){
     randomSpawn();
 
     //обнаружение свайпа и его направления
-    function swipe(){
+    function swipe(evt = 0){
+        var sizepx = cWidth / 100 * 50 / Msize
+
         if(mobile){ //обработка свайпа на телефоне
             evt.preventDefault();
             var touch = evt.changedTouches[0];
             var mouseX = touch.pageX;
             var mouseY = touch.pageY;
-            elem.addEventListener('touchend', function(){
-                if(Math.abs(touch.pageX - mouseX) > 10 || Math.abs(touch.pageY - mouseY) > 10){
+            //console.log(mouseX + " " + mouseY)
+            canvas.addEventListener('touchend', function(evt){
+                evt.preventDefault();
+                var touch = evt.changedTouches[0];
+                //console.log(touch.mouseX + " " + touch.mouseY)
+                if(Math.abs(touch.pageX - mouseX) > sizepx / 10 || Math.abs(touch.pageY - mouseY) > sizepx / 10){
                     if(Math.abs(touch.pageX - mouseX) > Math.abs(touch.pageY - mouseY)){
                         if(touch.pageX - mouseX > 0){
                             move(1);
@@ -102,7 +113,7 @@ window.onload = function(){
             var mouseY = event.clientY;
             //console.log(mouseX + " " + mouseY);
             canvas.onmouseup = function(){
-                if(Math.abs(event.clientX - mouseX) > 10 || Math.abs(event.clientY - mouseY) > 10){
+                if(Math.abs(event.clientX - mouseX) > sizepx / 10 || Math.abs(event.clientY - mouseY) > sizepx / 10){
                     if(Math.abs(event.clientX - mouseX) > Math.abs(event.clientY - mouseY)){
                         if(event.clientX - mouseX > 0){
                             move(1);
@@ -120,7 +131,7 @@ window.onload = function(){
             };
         }
 
-    }
+    } //конец функции свайп
 
     if(mobile){
         canvas.addEventListener('touchstart', swipe, false);
