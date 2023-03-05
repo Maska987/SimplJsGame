@@ -22,6 +22,14 @@ window.onload = function(){
         }
     }
 
+    var messeg = "mobile " + mobile;
+    function canvasConsole(messeg){ //консоль в canvas
+        context.beginPath();
+        context.font = cWidth / 100 * 50 / 5 + "px Arial";
+        context.fillStyle = "#17ab00";
+        context.fillText(messeg, 20, cHeight);
+    }
+
     //отрисовываем сетку и числа в ней
     function drawMas(sizepx = cWidth / 100 * 50 / Msize){
         var Xmas = cWidth / 100 * 25;
@@ -275,6 +283,7 @@ window.onload = function(){
         context.fillStyle = "#17ab00";
         context.fillText("Fps " + fps, 20, 20); //вывод fps на экран
 
+        canvasConsole(messeg) //отрисовка canvas консоли
         
 
         window.requestAnimationFrame(draw);
