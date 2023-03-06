@@ -46,7 +46,7 @@ window.onload = function(){
                     context.beginPath();
                     context.font = sizepx / lengthNumper + "px Arial";
                     context.fillStyle = "#17ab00";
-                    context.fillText(M[i][j], j * sizepx + Xmas + sizepx / 100 * 25, i * sizepx + Ymas + sizepx - sizepx / 100 * 10);
+                    context.fillText(M[i][j], j * sizepx + Xmas + sizepx / 100 * 23, i * sizepx + Ymas + sizepx / 2 + (sizepx / lengthNumper) / 2.8);
                 }
 
             }
@@ -97,26 +97,19 @@ window.onload = function(){
             var startX, startY, distX, distY;
             var threshold = sizepx / 10; // минимальное расстояние, чтобы считать свайп
           
-            canvas.ontouchstart = function(e) {
-                //console.log('touchstart')
-                var touch = e.changedTouches[0];
-                startX = touch.pageX;
-                startY = touch.pageY;
-                //console.log(startX + " " + startY)
-            }
+            //canvas.ontouchstart = function(e) {
+            //console.log('touchstart')
+            var touch = evt.changedTouches[0];
+            startX = touch.pageX;
+            startY = touch.pageY;
+            //console.log(startX + " " + startY)
+            
             
             canvas.ontouchend = function(e) {
-                //console.log('touchend')
                 var touch = e.changedTouches[0];
                 distX = touch.pageX - startX;
                 distY = touch.pageY - startY;
                 //console.log(startX + " " + startY + " " + distX + " " + distY)
-          
-              if (Math.abs(distX) >= threshold && Math.abs(distY) <= threshold) {
-                swipeDir = (distX < 0) ? move(3) : move(1);
-              } else if (Math.abs(distY) >= threshold && Math.abs(distX) <= threshold) {
-                swipeDir = (distY < 0) ? move(4) : move(2);
-              }
 
               if(Math.abs(distX) > sizepx / 10 || Math.abs(distY) > sizepx / 10){
                 if(Math.abs(distX) > Math.abs(distY)){
@@ -307,7 +300,7 @@ window.onload = function(){
         context.beginPath();
         context.font = cWidth / 100 * 50 / 10 + "px Arial";
         context.fillStyle = "#17ab00";
-        context.fillText("beta 2", cWidth - 150, cHeight - 2); //отрисовки версии
+        context.fillText("beta 3", cWidth - 150, cHeight - 2); //отрисовки версии
 
         window.requestAnimationFrame(draw);
     }

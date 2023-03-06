@@ -1,9 +1,17 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+
 #canvas {
     background-color: rgb(24, 24, 24);
     /*border: 9px solid green;*/
-    padding: 0;
-    margin: auto;
-    display: block;
-    width: 50%;
+    aspect-ratio: 1 / 1;
+    max-width: 100vw;
+    max-height: 100vh;
     
 }
