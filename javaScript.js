@@ -5,6 +5,9 @@ window.onload = function(){
     var cWidth = canvas.width;
     var cHeight = canvas.height;
 
+    var colorK = "#17ab00";
+    var colorB = "rgb(24, 24, 24)";
+
     if('ontouchstart' in window){
         var mobile = true;
         //event.preventDefault(); //отключение скролинга сайта и захват ивентов движения пальца
@@ -22,6 +25,84 @@ window.onload = function(){
         }
     }
 
+
+    var Animation = [];
+
+    class AnimKletka{
+        constructor(x, y, v, vek = 0){
+            this.x = x;
+            this.y = y;
+            this.cx = x * sizepx + Xmas;
+            this.cy = y * sizepx + Ymas;
+
+            this.v = v;
+            this.vekx = 0;
+            this.veky = 0;
+            this.moved = false;
+            this.summed = false;
+            this.k = 0;
+            this.speed = sizepx * 4;
+            if(vek){
+                this.move(vek);
+            }
+        }
+        move(vek = 0){
+            switch(vek){
+                case 0:
+                    this.vekx = 0;
+                    this.veky = 0;
+                    return 0;
+                    //break;
+                case 1:
+                    this.vekx = 1;
+                    this.veky = 0;
+                    break;
+                case 2:
+                    this.vekx = 0;
+                    this.veky = 1;
+                    break;
+                case 3:
+                    this.vekx = -1;
+                    this.veky = 0;
+                    break;
+                case 4:
+                    this.vekx = 0;
+                    this.veky = -1;
+                    break;}
+            this.k = sizepx;
+            this.moved = true;
+        }
+        draw(timePassed){
+            if(!this.moved){return 0}
+            this.cx += this.speed * timePassed * this.vekx;
+            this.cy += this.speed * timePassed * this.veky;
+            this.k -= this.speed * timePassed
+            if(this.k <= 0){
+                this.moved = false;
+            }
+
+            drawValue(this.cx, this.cy, this.v)
+        }
+
+    }
+
+    function drawValue(cx, cy, v){
+        context.beginPath();
+        context.fillStyle = colorB;
+        context.fillRect(cx + sizepx / 100 * 8, cy + sizepx / 100 * 8, sizepx - sizepx / 100 * 16, sizepx - sizepx / 100 * 16);
+        context.beginPath();
+        context.strokeStyle = colorK;
+        context.lineWidth = sizepx / 100 * 4
+        context.strokeRect(cx + sizepx / 100 * 8, cy + sizepx / 100 * 8, sizepx - sizepx / 100 * 16, sizepx - sizepx / 100 * 16);
+
+        var lengthNumper = v + ""
+        lengthNumper = lengthNumper.length
+        context.beginPath();
+        context.font = sizepx / lengthNumper + "px Arial";
+        context.fillStyle = colorK;
+        context.fillText(v, cx + sizepx / 100 * 23, cy + sizepx / 2 + (sizepx / lengthNumper) / 2.8);
+    }
+
     //var messeg = "mobile " + mobile;
     function canvasConsole(messeg){ //консоль в canvas
         context.beginPath();
@@ -30,27 +111,66 @@ window.onload = function(){
         context.fillText(messeg, 20, cHeight);
     }
 
+    var Xmas = cWidth / 100 * 25;
+    var Ymas = cHeight / 100 * 25;
+
     //отрисовываем сетку и числа в ней
-    function drawMas(sizepx = cWidth / 100 * 50 / Msize){
-        var Xmas = cWidth / 100 * 25;
-        var Ymas = cHeight / 100 * 25;
+    sizepx = cWidth / 100 * 50 / Msize
+    function drawMas(){
         for(i = 0; i < Msize; i++){
             for(j = 0; j < Msize; j++){
                 context.beginPath();
-                context.strokeStyle = "#17ab00";
+                context.lineWidth = sizepx / 100 * 2;
+                context.strokeStyle = colorK;
                 context.strokeRect(j * sizepx + Xmas, i * sizepx + Ymas, sizepx, sizepx);
 
                 if(M[i][j] != 0){
                     var lengthNumper = M[i][j] + ""
                     lengthNumper = lengthNumper.length
-                    context.beginPath();
+                    /*context.beginPath();
                     context.font = sizepx / lengthNumper + "px Arial";
-                    context.fillStyle = "#17ab00";
-                    context.fillText(M[i][j], j * sizepx + Xmas + sizepx / 100 * 23, i * sizepx + Ymas + sizepx / 2 + (sizepx / lengthNumper) / 2.8);
+                    context.fillStyle = colorK;
+                    context.fillText(M[i][j], j * sizepx + Xmas + sizepx / 100 * 23, i * sizepx + Ymas + sizepx / 2 + (sizepx / lengthNumper) / 2.8);*/
+
+                    drawValue(j * sizepx + Xmas, i * sizepx + Ymas, M[i][j].v)
                 }
 
             }
         }
+    }
+
+    class Value{
+        constructor(v){
+            this.v = v;
+            this.vekx = 0;
+            this.veky = 0;
+            this.summed = false;
+        }
+        /*move(vek = 0){
+            switch(vek){
+                case 0:
+                    this.vekx = 0;
+                    this.veky = 0;
+                    return 0;
+                    //break;
+                case 1:
+                    this.vekx = 1;
+                    this.veky = 0;
+                    break;
+                case 2:
+                    this.vekx = 0;
+                    this.veky = 1;
+                    break;
+                case 3:
+                    this.vekx = -1;
+                    this.veky = 0;
+                    break;
+                case 4:
+                    this.vekx = 0;
+                    this.veky = -1;
+                    break;
+                }
+        }*/
     }
 
     //втыкаем 2 или 4 в сетку
@@ -72,9 +192,9 @@ window.onload = function(){
             var rt = Math.floor(Math.random() * Msize);
             if(M[rx][rt] == 0){
                 if(Math.floor(Math.random() * 10) == 0){
-                    M[rx][rt] = 4;
+                    M[rx][rt] = new Value(4);
                 }else{
-                    M[rx][rt] = 2;
+                    M[rx][rt] = new Value(2);
                 }
                 return 1;
             }
@@ -89,6 +209,7 @@ window.onload = function(){
 
     //обнаружение свайпа и его направления
     function swipe(evt = 0){
+        console.log(M)
         var sizepx = cWidth / 100 * 50 / Msize
 
         if(mobile){ //обработка свайпа на телефоне
@@ -169,15 +290,17 @@ window.onload = function(){
                 while (flag){
                     flag = false;
                     for(li = 0; li < Msize; li++){
-                        for(lj = Msize - 1; lj >= 0; lj -= 1){
+                        for(lj = Msize - 2; lj >= 0; lj -= 1){
                             if(M[li][lj] != 0){ //находим не пустое значение
                                 if(M[li][lj + 1] == 0){ //если клетка впереди пустая двигаем значение
                                     M[li][lj + 1] = M[li][lj];
                                     M[li][lj] = 0;
                                     flag = true;
                                     flagup = true;
-                                }else if(M[li][lj + 1] == M[li][lj]){ //если одинаковые значения увеличиваем
-                                    M[li][lj + 1] = M[li][lj] * 2;
+                                }else if(M[li][lj + 1].v == M[li][lj].v){ //если одинаковые значения увеличиваем
+                                    if(M[li][lj + 1].summed || M[li][lj].summed){continue}
+                                    M[li][lj + 1].v = M[li][lj].v * 2;
+                                    M[li][lj + 1].summed = true;
                                     M[li][lj] = 0;
                                     flag = true;
                                     flagup = true;
@@ -196,15 +319,17 @@ window.onload = function(){
                 while (flag){
                     flag = false;
                     for(li = 0; li < Msize; li++){
-                        for(lj = 0; lj < Msize; lj++){
+                        for(lj = 1; lj < Msize; lj++){
                             if(M[li][lj] != 0){ //находим не пустое значение
                                 if(M[li][lj - 1] == 0){ //если клетка впереди пустая двигаем значение
                                     M[li][lj - 1] = M[li][lj];
                                     M[li][lj] = 0;
                                     flag = true;
                                     flagup = true;
-                                }else if(M[li][lj - 1] == M[li][lj]){ //если одинаковые значения увеличиваем
-                                    M[li][lj - 1] = M[li][lj] * 2;
+                                }else if(M[li][lj - 1].v == M[li][lj].v){ //если одинаковые значения увеличиваем
+                                    if(M[li][lj - 1].summed || M[li][lj].summed){continue}
+                                    M[li][lj - 1].v = M[li][lj].v * 2;
+                                    M[li][lj - 1].summed = true;
                                     M[li][lj] = 0;
                                     flag = true;
                                     flagup = true
@@ -230,8 +355,10 @@ window.onload = function(){
                                     M[li][lj] = 0;
                                     flag = true;
                                     flagup = true;
-                                }else if(M[li + 1][lj] == M[li][lj]){ //если одинаковые значения увеличиваем
-                                    M[li + 1][lj] = M[li][lj] * 2;
+                                }else if(M[li + 1][lj].v == M[li][lj].v){ //если одинаковые значения увеличиваем
+                                    if(M[li + 1][lj].summed || M[li][lj].summed){continue}
+                                    M[li + 1][lj].v = M[li][lj].v * 2;
+                                    M[li + 1][lj].summed = true;
                                     M[li][lj] = 0;
                                     flag = true;
                                     flagup = true;
@@ -257,8 +384,10 @@ window.onload = function(){
                                     M[li][lj] = 0;
                                     flag = true;
                                     flagup = true;
-                                }else if(M[li - 1][lj] == M[li][lj]){ //если одинаковые значения увеличиваем
-                                    M[li - 1][lj] = M[li][lj] * 2;
+                                }else if(M[li - 1][lj].v == M[li][lj].v){ //если одинаковые значения увеличиваем
+                                    if(M[li - 1][lj].summed || M[li][lj].summed){continue}
+                                    M[li - 1][lj].summed = true;
+                                    M[li - 1][lj].v = M[li][lj].v * 2;
                                     M[li][lj] = 0;
                                     flag = true;
                                     flagup = true;
@@ -271,13 +400,19 @@ window.onload = function(){
                     randomSpawn();
                 }
                 break;
-            
+        }
+        for(pi = 0; pi < Msize; pi++){
+            for(pj = 0; pj < Msize; pj++){
+                if(M[pj][pi] != 0){
+                    M[pj][pi].summed = false;
+                }
+            }
         }
     }
 
-    function update(){
 
-    }
+    Animation.push(new AnimKletka(1, 1, 2, 1))
+
 
     //функция отрисоки и обновления
     function draw(){
@@ -289,6 +424,10 @@ window.onload = function(){
         context.clearRect(0, 0, cWidth, cHeight)
 
         drawMas()
+        for (let i = 0; i < Animation.length; i++){
+            Animation[i].draw(timePassed);
+
+        }
 
         context.beginPath();
         context.font = cWidth / 100 * 50 / 12 + "px Arial";
@@ -300,7 +439,7 @@ window.onload = function(){
         context.beginPath();
         context.font = cWidth / 100 * 50 / 10 + "px Arial";
         context.fillStyle = "#17ab00";
-        context.fillText("beta 3", cWidth - 150, cHeight - 2); //отрисовки версии
+        context.fillText("beta 5", cWidth - 150, cHeight - 2); //отрисовки версии
 
         window.requestAnimationFrame(draw);
     }
