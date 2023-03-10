@@ -1,5 +1,9 @@
 //Я КОРОЛЬ КОСТЫЛЕЙ
 window.onload = function(){
+    document.addEventListener('touchmove', function(event) {
+        event.preventDefault();
+    }, { passive: false });
+
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext("2d");
     var t = Date.now();
@@ -30,22 +34,29 @@ window.onload = function(){
     var Animation = [];
 
     class AnimKletka{
-        constructor(x, y, v, vek = 0, kk = 0){
+        constructor(x, y, v, vek = 0, kk = 0, summed = false, spawn = false){
             //console.log(x, y, kk)
             this.x = x;
             this.y = y;
             this.cx = x * sizepx + Xmas;
             this.cy = y * sizepx + Ymas;
 
+            if(spawn){
+                this.sizek = 20;
+            }else{
+                this.sizek = 8;
+            }
             this.v = v;
             this.vekx = 0;
             this.veky = 0;
             this.moved = true;
-            //this.summed = false;
+            this.summed = summed;
             this.k = 0;
             this.lk = 0;
             this.kk = kk;
             this.speed = sizepx * kk * 6;
+            this.spawn = spawn;
+
             if(vek){
                 this.move(vek);
             }
@@ -55,7 +66,7 @@ window.onload = function(){
                 case 0:
                     this.vekx = 0;
                     this.veky = 0;
-                    //break;
+                    break;
                 case 1:
                     this.vekx = 1;
                     this.veky = 0;
@@ -77,31 +88,44 @@ window.onload = function(){
             this.cy = this.cy + sizepx * this.veky * this.kk * -1;
         }
         draw(timePassed){
+            if(this.spawn){
+                //console.log(this.sizek)
+                if(this.sizek <= 8){
+                    this.spawn = false;
+                    this.sizek = 8;
+                }else{
+                    this.sizek -= sizepx / 2 * timePassed;
+                }
+            }
             if(!this.moved){
-                drawValue(this.cx, this.cy, this.v);
+                drawValue(this.cx, this.cy, this.v, this.sizek);
                 return 0}
             this.cx += this.speed * timePassed * this.vekx;
             this.cy += this.speed * timePassed * this.veky;
-            this.k -= this.speed * timePassed
+            this.k -= this.speed * timePassed;
             if(this.k <= 0){
                 this.moved = false;
                 this.cx = this.x * sizepx + Xmas;
                 this.cy = this.y * sizepx + Ymas;
             }
 
-            drawValue(this.cx, this.cy, this.v)
+            if(this.summed){
+                //console.log(this.x, this.y)
+                drawValue(this.cx, this.cy, this.v / 2, this.sizek)
+            }else{
+                drawValue(this.cx, this.cy, this.v, this.sizek)
+            }
         }
-
     }
 
-    function drawValue(cx, cy, v){
+    function drawValue(cx, cy, v, size = 8){
         context.beginPath();
         context.fillStyle = colorB;
-        context.fillRect(cx + sizepx / 100 * 8, cy + sizepx / 100 * 8, sizepx - sizepx / 100 * 16, sizepx - sizepx / 100 * 16);
+        context.fillRect(cx + sizepx / 100 * size, cy + sizepx / 100 * size, sizepx - sizepx / 100 * size * 2, sizepx - sizepx / 100 * size * 2);
         context.beginPath();
         context.strokeStyle = colorK;
-        context.lineWidth = sizepx / 100 * 4
-        context.strokeRect(cx + sizepx / 100 * 8, cy + sizepx / 100 * 8, sizepx - sizepx / 100 * 16, sizepx - sizepx / 100 * 16);
+        context.lineWidth = sizepx / 100 * 4;
+        context.strokeRect(cx + sizepx / 100 * size, cy + sizepx / 100 * size, sizepx - sizepx / 100 * size * 2, sizepx - sizepx / 100 * size * 2);
 
         var lengthNumper = v + ""
         lengthNumper = lengthNumper.length
@@ -202,10 +226,10 @@ window.onload = function(){
             if(M[rx][rt] == 0){
                 if(Math.floor(Math.random() * 10) == 0){
                     M[rx][rt] = new Value(4);
-                    Animation.push(new AnimKletka(rt, rx, M[rx][rt].v, 0, 0))
+                    Animation.push(new AnimKletka(rt, rx, M[rx][rt].v, 0, 0, false, true))
                 }else{
                     M[rx][rt] = new Value(2);
-                    Animation.push(new AnimKletka(rt, rx, M[rx][rt].v, 0, 0))
+                    Animation.push(new AnimKletka(rt, rx, M[rx][rt].v, 0, 0, false, true))
                 }
                 return 1;
             }
@@ -314,11 +338,10 @@ window.onload = function(){
                                     if(M[li][lj + 1].summed || M[li][lj].summed){continue}
                                     //console.log(M[li][lj])
                                     if(!push){
-                                        console.log(Animation)
                                         Animation = [];
                                         push = true;
                                     }
-                                    Animation.push(new AnimKletka(lj + 1, li, M[li][lj].v * 2, 1, M[li][lj].kk + 1))
+                                    Animation.push(new AnimKletka(lj + 1, li, M[li][lj].v * 2, 1, M[li][lj].kk + 1, true))
                                     //M[li][lj].kk += 1;
                                     //Animation.push(new AnimKletka(lj, li, M[li][lj].v, 1))
                                     M[li][lj + 1].v = M[li][lj].v * 2;
@@ -336,11 +359,11 @@ window.onload = function(){
                         for(pj = 0; pj < Msize; pj++){
                             if(M[pj][pi] != 0){
                                 if(!push){
-                                    console.log(Animation)
+                                    
                                     Animation = [];
                                     push = true;
                                 }
-                                Animation.push(new AnimKletka(pi, pj, M[pj][pi].v, 1, M[pj][pi].kk))
+                                Animation.unshift(new AnimKletka(pi, pj, M[pj][pi].v, 1, M[pj][pi].kk))
                                 M[pj][pi].kk = 0;
                             }
                         }
@@ -367,11 +390,11 @@ window.onload = function(){
                                 }else if(M[li][lj - 1].v == M[li][lj].v){ //если одинаковые значения увеличиваем
                                     if(M[li][lj - 1].summed || M[li][lj].summed){continue}
                                     if(!push){
-                                        console.log(Animation)
+                                        //console.log(Animation)
                                         Animation = [];
                                         push = true;
                                     }
-                                    Animation.push(new AnimKletka(lj - 1, li, M[li][lj].v * 2, 3, M[li][lj].kk + 1))
+                                    Animation.push(new AnimKletka(lj - 1, li, M[li][lj].v * 2, 3, M[li][lj].kk + 1, true))
                                     M[li][lj - 1].v = M[li][lj].v * 2;
                                     M[li][lj - 1].summed = true;
                                     M[li][lj] = 0;
@@ -387,11 +410,11 @@ window.onload = function(){
                         for(pj = 0; pj < Msize; pj++){
                             if(M[pj][pi] != 0){
                                 if(!push){
-                                    console.log(Animation)
+                                    //console.log(Animation)
                                     Animation = [];
                                     push = true;
                                 }
-                                Animation.push(new AnimKletka(pi, pj, M[pj][pi].v, 3, M[pj][pi].kk))
+                                Animation.unshift(new AnimKletka(pi, pj, M[pj][pi].v, 3, M[pj][pi].kk))
                                 M[pj][pi].kk = 0;
                             }
                         }
@@ -417,11 +440,11 @@ window.onload = function(){
                                 }else if(M[li + 1][lj].v == M[li][lj].v){ //если одинаковые значения увеличиваем
                                     if(M[li + 1][lj].summed || M[li][lj].summed){continue}
                                     if(!push){
-                                        console.log(Animation)
+                                        //console.log(Animation)
                                         Animation = [];
                                         push = true;
                                     }
-                                    Animation.push(new AnimKletka(lj, li + 1, M[li][lj].v * 2, 2, M[li][lj].kk + 1))
+                                    Animation.push(new AnimKletka(lj, li + 1, M[li][lj].v * 2, 2, M[li][lj].kk + 1, true))
                                     M[li + 1][lj].v = M[li][lj].v * 2;
                                     M[li + 1][lj].summed = true;
                                     M[li][lj] = 0;
@@ -437,11 +460,11 @@ window.onload = function(){
                         for(pj = 0; pj < Msize; pj++){
                             if(M[pj][pi] != 0){
                                 if(!push){
-                                    console.log(Animation)
+                                    //console.log(Animation)
                                     Animation = [];
                                     push = true;
                                 }
-                                Animation.push(new AnimKletka(pi, pj, M[pj][pi].v, 2, M[pj][pi].kk))
+                                Animation.unshift(new AnimKletka(pi, pj, M[pj][pi].v, 2, M[pj][pi].kk))
                                 M[pj][pi].kk = 0;
                             }
                         }
@@ -467,11 +490,10 @@ window.onload = function(){
                                 }else if(M[li - 1][lj].v == M[li][lj].v){ //если одинаковые значения увеличиваем
                                     if(M[li - 1][lj].summed || M[li][lj].summed){continue}
                                     if(!push){
-                                        console.log(Animation)
                                         Animation = [];
                                         push = true;
                                     }
-                                    Animation.push(new AnimKletka(lj, li - 1, M[li][lj].v * 2, 4, M[li][lj].kk + 1))
+                                    Animation.push(new AnimKletka(lj, li - 1, M[li][lj].v * 2, 4, M[li][lj].kk + 1, true))
                                     M[li - 1][lj].summed = true;
                                     M[li - 1][lj].v = M[li][lj].v * 2;
                                     M[li][lj] = 0;
@@ -487,11 +509,10 @@ window.onload = function(){
                         for(pj = 0; pj < Msize; pj++){
                             if(M[pj][pi] != 0){
                                 if(!push){
-                                    console.log(Animation)
                                     Animation = [];
                                     push = true;
                                 }
-                                Animation.push(new AnimKletka(pi, pj, M[pj][pi].v, 4, M[pj][pi].kk))
+                                Animation.unshift(new AnimKletka(pi, pj, M[pj][pi].v, 4, M[pj][pi].kk))
                                 M[pj][pi].kk = 0;
                             }
                         }
@@ -541,7 +562,7 @@ window.onload = function(){
         context.beginPath();
         context.font = cWidth / 100 * 50 / 10 + "px Arial";
         context.fillStyle = "#17ab00";
-        context.fillText("beta 6", cWidth - 150, cHeight - 2); //отрисовки версии
+        context.fillText("beta 7", cWidth - 150, cHeight - 2); //отрисовки версии
 
         window.requestAnimationFrame(draw);
     }
