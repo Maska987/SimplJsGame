@@ -1,3 +1,4 @@
+//Я КОРОЛЬ КОСТЫЛЕЙ
 window.onload = function(){
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext("2d");
@@ -29,7 +30,8 @@ window.onload = function(){
     var Animation = [];
 
     class AnimKletka{
-        constructor(x, y, v, vek = 0){
+        constructor(x, y, v, vek = 0, kk = 0){
+            //console.log(x, y, kk)
             this.x = x;
             this.y = y;
             this.cx = x * sizepx + Xmas;
@@ -38,10 +40,12 @@ window.onload = function(){
             this.v = v;
             this.vekx = 0;
             this.veky = 0;
-            this.moved = false;
-            this.summed = false;
+            this.moved = true;
+            //this.summed = false;
             this.k = 0;
-            this.speed = sizepx * 4;
+            this.lk = 0;
+            this.kk = kk;
+            this.speed = sizepx * kk * 6;
             if(vek){
                 this.move(vek);
             }
@@ -51,7 +55,6 @@ window.onload = function(){
                 case 0:
                     this.vekx = 0;
                     this.veky = 0;
-                    return 0;
                     //break;
                 case 1:
                     this.vekx = 1;
@@ -69,16 +72,21 @@ window.onload = function(){
                     this.vekx = 0;
                     this.veky = -1;
                     break;}
-            this.k = sizepx;
-            this.moved = true;
+            this.k = sizepx * this.kk;
+            this.cx = this.cx + sizepx * this.vekx * this.kk * -1;
+            this.cy = this.cy + sizepx * this.veky * this.kk * -1;
         }
         draw(timePassed){
-            if(!this.moved){return 0}
+            if(!this.moved){
+                drawValue(this.cx, this.cy, this.v);
+                return 0}
             this.cx += this.speed * timePassed * this.vekx;
             this.cy += this.speed * timePassed * this.veky;
             this.k -= this.speed * timePassed
             if(this.k <= 0){
                 this.moved = false;
+                this.cx = this.x * sizepx + Xmas;
+                this.cy = this.y * sizepx + Ymas;
             }
 
             drawValue(this.cx, this.cy, this.v)
@@ -132,7 +140,7 @@ window.onload = function(){
                     context.fillStyle = colorK;
                     context.fillText(M[i][j], j * sizepx + Xmas + sizepx / 100 * 23, i * sizepx + Ymas + sizepx / 2 + (sizepx / lengthNumper) / 2.8);*/
 
-                    drawValue(j * sizepx + Xmas, i * sizepx + Ymas, M[i][j].v)
+                    //drawValue(j * sizepx + Xmas, i * sizepx + Ymas, M[i][j].v)
                 }
 
             }
@@ -145,6 +153,7 @@ window.onload = function(){
             this.vekx = 0;
             this.veky = 0;
             this.summed = false;
+            this.kk = 0;
         }
         /*move(vek = 0){
             switch(vek){
@@ -193,8 +202,10 @@ window.onload = function(){
             if(M[rx][rt] == 0){
                 if(Math.floor(Math.random() * 10) == 0){
                     M[rx][rt] = new Value(4);
+                    Animation.push(new AnimKletka(rt, rx, M[rx][rt].v, 0, 0))
                 }else{
                     M[rx][rt] = new Value(2);
+                    Animation.push(new AnimKletka(rt, rx, M[rx][rt].v, 0, 0))
                 }
                 return 1;
             }
@@ -209,7 +220,6 @@ window.onload = function(){
 
     //обнаружение свайпа и его направления
     function swipe(evt = 0){
-        console.log(M)
         var sizepx = cWidth / 100 * 50 / Msize
 
         if(mobile){ //обработка свайпа на телефоне
@@ -287,18 +297,30 @@ window.onload = function(){
             case 1: //свайп вправо
                 var flag = true;
                 flagup = false; //флаг изменились ли значения вообще для randomSpawn
+                var push = false;
                 while (flag){
                     flag = false;
                     for(li = 0; li < Msize; li++){
                         for(lj = Msize - 2; lj >= 0; lj -= 1){
                             if(M[li][lj] != 0){ //находим не пустое значение
                                 if(M[li][lj + 1] == 0){ //если клетка впереди пустая двигаем значение
+                                    M[li][lj].kk += 1;
                                     M[li][lj + 1] = M[li][lj];
+                                    //Animation.push(new AnimKletka(lj, li, M[li][lj].v, 1))
                                     M[li][lj] = 0;
                                     flag = true;
                                     flagup = true;
                                 }else if(M[li][lj + 1].v == M[li][lj].v){ //если одинаковые значения увеличиваем
                                     if(M[li][lj + 1].summed || M[li][lj].summed){continue}
+                                    //console.log(M[li][lj])
+                                    if(!push){
+                                        console.log(Animation)
+                                        Animation = [];
+                                        push = true;
+                                    }
+                                    Animation.push(new AnimKletka(lj + 1, li, M[li][lj].v * 2, 1, M[li][lj].kk + 1))
+                                    //M[li][lj].kk += 1;
+                                    //Animation.push(new AnimKletka(lj, li, M[li][lj].v, 1))
                                     M[li][lj + 1].v = M[li][lj].v * 2;
                                     M[li][lj + 1].summed = true;
                                     M[li][lj] = 0;
@@ -310,10 +332,25 @@ window.onload = function(){
                     }
                 }
                 if(flagup){
+                    for(pi = 0; pi < Msize; pi++){
+                        for(pj = 0; pj < Msize; pj++){
+                            if(M[pj][pi] != 0){
+                                if(!push){
+                                    console.log(Animation)
+                                    Animation = [];
+                                    push = true;
+                                }
+                                Animation.push(new AnimKletka(pi, pj, M[pj][pi].v, 1, M[pj][pi].kk))
+                                M[pj][pi].kk = 0;
+                            }
+                        }
+                    }
                     randomSpawn();
                 }
                 break;
+
             case 3: //свайп влево
+                var push = false;
                 var flag = true;
                 var flagup = false;
                 while (flag){
@@ -322,12 +359,19 @@ window.onload = function(){
                         for(lj = 1; lj < Msize; lj++){
                             if(M[li][lj] != 0){ //находим не пустое значение
                                 if(M[li][lj - 1] == 0){ //если клетка впереди пустая двигаем значение
+                                    M[li][lj].kk += 1;
                                     M[li][lj - 1] = M[li][lj];
                                     M[li][lj] = 0;
                                     flag = true;
                                     flagup = true;
                                 }else if(M[li][lj - 1].v == M[li][lj].v){ //если одинаковые значения увеличиваем
                                     if(M[li][lj - 1].summed || M[li][lj].summed){continue}
+                                    if(!push){
+                                        console.log(Animation)
+                                        Animation = [];
+                                        push = true;
+                                    }
+                                    Animation.push(new AnimKletka(lj - 1, li, M[li][lj].v * 2, 3, M[li][lj].kk + 1))
                                     M[li][lj - 1].v = M[li][lj].v * 2;
                                     M[li][lj - 1].summed = true;
                                     M[li][lj] = 0;
@@ -339,10 +383,24 @@ window.onload = function(){
                     }
                 }
                 if(flagup){
+                    for(pi = 0; pi < Msize; pi++){
+                        for(pj = 0; pj < Msize; pj++){
+                            if(M[pj][pi] != 0){
+                                if(!push){
+                                    console.log(Animation)
+                                    Animation = [];
+                                    push = true;
+                                }
+                                Animation.push(new AnimKletka(pi, pj, M[pj][pi].v, 3, M[pj][pi].kk))
+                                M[pj][pi].kk = 0;
+                            }
+                        }
+                    }
                     randomSpawn();
                 }
                 break;
             case 2: //свайп вниз
+                var push = false;
                 var flag = true;
                 var flagup = false;
                 while (flag){
@@ -351,12 +409,19 @@ window.onload = function(){
                         for(lj = 0; lj < Msize; lj++){
                             if(M[li][lj] != 0){ //находим не пустое значение
                                 if(M[li + 1][lj] == 0){ //если клетка впереди пустая двигаем значение
+                                    M[li][lj].kk += 1;
                                     M[li + 1][lj] = M[li][lj];
                                     M[li][lj] = 0;
                                     flag = true;
                                     flagup = true;
                                 }else if(M[li + 1][lj].v == M[li][lj].v){ //если одинаковые значения увеличиваем
                                     if(M[li + 1][lj].summed || M[li][lj].summed){continue}
+                                    if(!push){
+                                        console.log(Animation)
+                                        Animation = [];
+                                        push = true;
+                                    }
+                                    Animation.push(new AnimKletka(lj, li + 1, M[li][lj].v * 2, 2, M[li][lj].kk + 1))
                                     M[li + 1][lj].v = M[li][lj].v * 2;
                                     M[li + 1][lj].summed = true;
                                     M[li][lj] = 0;
@@ -368,10 +433,24 @@ window.onload = function(){
                     }
                 }
                 if(flagup){
+                    for(pi = 0; pi < Msize; pi++){
+                        for(pj = 0; pj < Msize; pj++){
+                            if(M[pj][pi] != 0){
+                                if(!push){
+                                    console.log(Animation)
+                                    Animation = [];
+                                    push = true;
+                                }
+                                Animation.push(new AnimKletka(pi, pj, M[pj][pi].v, 2, M[pj][pi].kk))
+                                M[pj][pi].kk = 0;
+                            }
+                        }
+                    }
                     randomSpawn();
                 }
                 break;
             case 4: //свайп вверх
+                var push = false;
                 var flag = true;
                 var flagup = false;
                 while (flag){
@@ -380,12 +459,19 @@ window.onload = function(){
                         for(lj = 0; lj < Msize; lj++){
                             if(M[li][lj] != 0){ //находим не пустое значение
                                 if(M[li - 1][lj] == 0){ //если клетка впереди пустая двигаем значение
+                                    M[li][lj].kk += 1;
                                     M[li - 1][lj] = M[li][lj];
                                     M[li][lj] = 0;
                                     flag = true;
                                     flagup = true;
                                 }else if(M[li - 1][lj].v == M[li][lj].v){ //если одинаковые значения увеличиваем
                                     if(M[li - 1][lj].summed || M[li][lj].summed){continue}
+                                    if(!push){
+                                        console.log(Animation)
+                                        Animation = [];
+                                        push = true;
+                                    }
+                                    Animation.push(new AnimKletka(lj, li - 1, M[li][lj].v * 2, 4, M[li][lj].kk + 1))
                                     M[li - 1][lj].summed = true;
                                     M[li - 1][lj].v = M[li][lj].v * 2;
                                     M[li][lj] = 0;
@@ -397,6 +483,19 @@ window.onload = function(){
                     }
                 }
                 if(flagup){
+                    for(pi = 0; pi < Msize; pi++){
+                        for(pj = 0; pj < Msize; pj++){
+                            if(M[pj][pi] != 0){
+                                if(!push){
+                                    console.log(Animation)
+                                    Animation = [];
+                                    push = true;
+                                }
+                                Animation.push(new AnimKletka(pi, pj, M[pj][pi].v, 4, M[pj][pi].kk))
+                                M[pj][pi].kk = 0;
+                            }
+                        }
+                    }
                     randomSpawn();
                 }
                 break;
@@ -411,9 +510,6 @@ window.onload = function(){
     }
 
 
-    Animation.push(new AnimKletka(1, 1, 2, 1))
-
-
     //функция отрисоки и обновления
     function draw(){
         //подсчет и отрисовка fps
@@ -424,10 +520,16 @@ window.onload = function(){
         context.clearRect(0, 0, cWidth, cHeight)
 
         drawMas()
-        for (let i = 0; i < Animation.length; i++){
+        for (let i = Animation.length - 1; i >= 0; i--){
+            //console.log(Animation[i].moved)
             Animation[i].draw(timePassed);
-
         }
+        /*for (let i = Animation.length - 1; i >= 0; i--){
+            if(!Animation[i].moved){
+                Animation.pop();
+            }
+            
+        }*/
 
         context.beginPath();
         context.font = cWidth / 100 * 50 / 12 + "px Arial";
@@ -439,7 +541,7 @@ window.onload = function(){
         context.beginPath();
         context.font = cWidth / 100 * 50 / 10 + "px Arial";
         context.fillStyle = "#17ab00";
-        context.fillText("beta 5", cWidth - 150, cHeight - 2); //отрисовки версии
+        context.fillText("beta 6", cWidth - 150, cHeight - 2); //отрисовки версии
 
         window.requestAnimationFrame(draw);
     }
