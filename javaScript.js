@@ -7,6 +7,9 @@ window.onload = function(){
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext("2d");
     var t = Date.now();
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     var cWidth = canvas.width;
     var cHeight = canvas.height;
 
@@ -32,6 +35,9 @@ window.onload = function(){
 
 
     var Animation = [];
+    var Menu = [];
+
+
 
     class AnimKletka{
         constructor(x, y, v, vek = 0, kk = 0, summed = false, spawn = false){
@@ -143,11 +149,37 @@ window.onload = function(){
         context.fillText(messeg, 20, cHeight);
     }
 
-    var Xmas = cWidth / 100 * 25;
-    var Ymas = cHeight / 100 * 25;
+
+    //задаем размеры canvas
+    if(cWidth > cHeight){
+        var Ymas = cHeight / 100 * 25;
+        var Xmas = cWidth / 2 - Ymas;
+        sizepx = cHeight / 100 * 50 / Msize
+    }else{
+        var Xmas = cWidth / 100 * 25;
+        var Ymas = cHeight / 2 - Xmas;
+        sizepx = cWidth / 100 * 50 / Msize
+    }
+
+    window.onresize = function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        cWidth = canvas.width;
+        cHeight = canvas.height;
+        if(cWidth > cHeight){
+            Ymas = cHeight / 100 * 25;
+            Xmas = cWidth / 2 - Ymas;
+            sizepx = cHeight / 100 * 50 / Msize
+        }else{
+            Xmas = cWidth / 100 * 25;
+            Ymas = cHeight / 2 - Xmas;
+            sizepx = cWidth / 100 * 50 / Msize
+        }
+    }
+    //var Xmas = cWidth / 100 * 25;
+    //var Ymas = cHeight / 100 * 25;
 
     //отрисовываем сетку и числа в ней
-    sizepx = cWidth / 100 * 50 / Msize
     function drawMas(){
         for(i = 0; i < Msize; i++){
             for(j = 0; j < Msize; j++){
@@ -553,16 +585,16 @@ window.onload = function(){
         }*/
 
         context.beginPath();
-        context.font = cWidth / 100 * 50 / 12 + "px Arial";
+        context.font = sizepx / 2 + "px Arial";
         context.fillStyle = "#17ab00";
-        context.fillText("Fps " + fps, 20, cWidth / 100 * 50 / 12 + 5); //вывод fps на экран
+        context.fillText("Fps " + fps, 5, sizepx / 2); //вывод fps на экран
 
         //canvasConsole(k) //отрисовка canvas консоли
 
         context.beginPath();
-        context.font = cWidth / 100 * 50 / 10 + "px Arial";
+        context.font = sizepx / 2 + "px Arial";
         context.fillStyle = "#17ab00";
-        context.fillText("beta 7", cWidth - 150, cHeight - 2); //отрисовки версии
+        context.fillText("beta 8", cWidth - sizepx * 1.5, cHeight - 2); //отрисовки версии
 
         window.requestAnimationFrame(draw);
     }
