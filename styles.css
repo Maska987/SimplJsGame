@@ -6,6 +6,10 @@
     align-items: center;
   }*/
   
+body {
+  overflow-y: hidden;
+  touch-action: manipulation;
+}
 
 #canvas {
     background-color: rgb(24, 24, 24);
