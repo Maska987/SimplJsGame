@@ -175,6 +175,14 @@ window.onload = function(){
             Ymas = cHeight / 2 - Xmas;
             sizepx = cWidth / 100 * 50 / Msize
         }
+
+        Animation = [];
+        for(i = 0; i < Msize; i++){
+            for(j = 0; j < Msize; j++){
+                if(M[i][j] == 0){continue;}
+                Animation.push(new AnimKletka(j, i, M[i][j].v, 0, 0, false, false))
+            }
+        }
     }
     //var Xmas = cWidth / 100 * 25;
     //var Ymas = cHeight / 100 * 25;
