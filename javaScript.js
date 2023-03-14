@@ -276,7 +276,7 @@ window.onload = function(){
 
     if(!mobile){ //добавляем слушателся нажатий клавишь
         document.addEventListener("keydown", function(event) {
-            console.log(event.keyCode); // Выводим код нажатой клавиши в консоль
+            //console.log(event.keyCode); // Выводим код нажатой клавиши в консоль
             switch(event.keyCode){
                 case 68:
                 case 102:
