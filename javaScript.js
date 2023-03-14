@@ -7,6 +7,10 @@ window.onload = function(){
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext("2d");
     var t = Date.now();
+
+    var Msize = 4;
+
+    var score = 0;
     
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -23,7 +27,6 @@ window.onload = function(){
         var mobile = false
     }//проверка сайт мобильный или комп
 
-    var Msize = 4;
 
     var M = [];
     for(i = 0; i < Msize; i++){
@@ -32,6 +35,9 @@ window.onload = function(){
             M[i][j] = 0;
         }
     }
+
+
+
 
 
     var Animation = [];
@@ -199,12 +205,6 @@ window.onload = function(){
                 if(M[i][j] != 0){
                     var lengthNumper = M[i][j] + ""
                     lengthNumper = lengthNumper.length
-                    /*context.beginPath();
-                    context.font = sizepx / lengthNumper + "px Arial";
-                    context.fillStyle = colorK;
-                    context.fillText(M[i][j], j * sizepx + Xmas + sizepx / 100 * 23, i * sizepx + Ymas + sizepx / 2 + (sizepx / lengthNumper) / 2.8);*/
-
-                    //drawValue(j * sizepx + Xmas, i * sizepx + Ymas, M[i][j].v)
                 }
 
             }
@@ -219,31 +219,6 @@ window.onload = function(){
             this.summed = false;
             this.kk = 0;
         }
-        /*move(vek = 0){
-            switch(vek){
-                case 0:
-                    this.vekx = 0;
-                    this.veky = 0;
-                    return 0;
-                    //break;
-                case 1:
-                    this.vekx = 1;
-                    this.veky = 0;
-                    break;
-                case 2:
-                    this.vekx = 0;
-                    this.veky = 1;
-                    break;
-                case 3:
-                    this.vekx = -1;
-                    this.veky = 0;
-                    break;
-                case 4:
-                    this.vekx = 0;
-                    this.veky = -1;
-                    break;
-                }
-        }*/
     }
 
     //втыкаем 2 или 4 в сетку
@@ -403,6 +378,7 @@ window.onload = function(){
                                     flagup = true;
                                 }else if(M[li][lj + 1].v == M[li][lj].v){ //если одинаковые значения увеличиваем
                                     if(M[li][lj + 1].summed || M[li][lj].summed){continue}
+                                    score += M[li][lj].v * 2
                                     //console.log(M[li][lj])
                                     if(!push){
                                         Animation = [];
@@ -456,6 +432,7 @@ window.onload = function(){
                                     flagup = true;
                                 }else if(M[li][lj - 1].v == M[li][lj].v){ //если одинаковые значения увеличиваем
                                     if(M[li][lj - 1].summed || M[li][lj].summed){continue}
+                                    score += M[li][lj].v * 2
                                     if(!push){
                                         //console.log(Animation)
                                         Animation = [];
@@ -506,6 +483,7 @@ window.onload = function(){
                                     flagup = true;
                                 }else if(M[li + 1][lj].v == M[li][lj].v){ //если одинаковые значения увеличиваем
                                     if(M[li + 1][lj].summed || M[li][lj].summed){continue}
+                                    score += M[li][lj].v * 2
                                     if(!push){
                                         //console.log(Animation)
                                         Animation = [];
@@ -556,6 +534,7 @@ window.onload = function(){
                                     flagup = true;
                                 }else if(M[li - 1][lj].v == M[li][lj].v){ //если одинаковые значения увеличиваем
                                     if(M[li - 1][lj].summed || M[li][lj].summed){continue}
+                                    score += M[li][lj].v * 2
                                     if(!push){
                                         Animation = [];
                                         push = true;
@@ -618,6 +597,11 @@ window.onload = function(){
             }
             
         }*/
+
+        context.beginPath();
+        context.font = sizepx / 2 + "px trebuchet ms";
+        context.fillStyle = "#17ab00";
+        context.fillText("Очки: " + score, Xmas, Ymas - 10);
 
         context.beginPath();
         context.font = sizepx / 2 + "px Arial";
