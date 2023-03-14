@@ -36,7 +36,7 @@ window.onload = function(){
 
     var Animation = [];
     var Menu = [];
-
+    
 
 
     class AnimKletka{
@@ -274,6 +274,33 @@ window.onload = function(){
 
     
 
+    if(!mobile){ //добавляем слушателся нажатий клавишь
+        document.addEventListener("keydown", function(event) {
+            console.log(event.keyCode); // Выводим код нажатой клавиши в консоль
+            switch(event.keyCode){
+                case 68:
+                case 102:
+                case 39:
+                    move(1);
+                    break;
+                case 83:
+                case 98:
+                case 40:
+                    move(2);
+                    break;
+                case 65:
+                case 100:
+                case 37:
+                    move(3);
+                    break;
+                case 87:
+                case 104:
+                case 38:
+                    move(4);
+                    break;
+            }
+          });
+    }
     //обнаружение свайпа и его направления
     function swipe(evt = 0){
         var sizepx = cWidth / 100 * 50 / Msize
